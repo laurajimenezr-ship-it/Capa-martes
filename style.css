@@ -1,0 +1,15 @@
+/* Fondo transparente: en OBS se ve la cámara por debajo */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+}
+body {
+  display: grid;
+  place-items: center;
+}
+canvas {
+  display: block;
+}
