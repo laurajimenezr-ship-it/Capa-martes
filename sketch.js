@@ -1,106 +1,74 @@
 // =====================================================
-//  CAPA DE CÁMARA · adentro afuera · Interludio: Martes
-//  Se pone ENCIMA de tu cámara en OBS. El fondo es transparente.
-//  Cambia de momento sola cuando el loop llega a cada uno.
+//  LOOP · sesion_martes.log
+//  adentro afuera · Interludio: Martes
+//  La ventana de chat como trayecto. Se repite sola.
 // =====================================================
-//  CONTROLES (en la ventana "Interactuar" de esta fuente)
-//  Espacio / →   siguiente frase del momento
-//  ←             frase anterior
-//  0             entrada (antes de los cuatro momentos)
-//  1 2 3 4       Autenticidad · Integridad · Fiabilidad · Disponibilidad
-//  H             ocultar / mostrar subtítulos
-//  R             volver a la entrada
+//  CONTROLES
+//  1 2 3 4   saltar a Autenticidad · Integridad · Fiabilidad · Disponibilidad
+//  Espacio   pausar / seguir
+//  S         sonido de teclado (sí / no) — haz clic en la pantalla primero
+//  R         reiniciar
+//  F         pantalla completa
 // =====================================================
 
-// ---------- 1. EDITA AQUÍ TUS FRASES ----------
-// Cada momento tiene su pregunta y las frases que dices (una por línea).
-// Son un borrador: cámbialas por tus propias palabras.
-const MOMENTOS = {
-  ENTRADA: {
-    num: '00', titulo: 'MARTES', pregunta: 'mi trayecto no tiene calles: tiene horas',
-    frases: [
-      'Mi trayecto no tiene calles. Tiene horas.',
-      'De 09:14 a 17:52, mi ciudad es una ventana de chat.'
-    ]
-  },
-  AUTENTICIDAD: {
-    num: '01', titulo: 'AUTENTICIDAD', pregunta: '¿quién escribió esto?',
-    frases: [
-      'Este párrafo lo escribimos entre las dos.',
-      'Una de nosotras no tiene cuerpo.',
-      'Adivinen cuál parte es mía.'
-    ]
-  },
-  INTEGRIDAD: {
-    num: '02', titulo: 'INTEGRIDAD', pregunta: '¿qué se perdió?',
-    frases: [
-      'Le pedí que sonara a mí.',
-      'Me devolvió una versión más correcta de alguien que no soy.'
-    ]
-  },
-  FIABILIDAD: {
-    num: '03', titulo: 'FIABILIDAD', pregunta: '¿en qué confío?',
-    frases: [
-      'Se equivocó con total seguridad.',
-      'Llevo años verificando documentos. Ahora verifico a quien me ayuda a escribirlos.'
-    ]
-  },
-  DISPONIBILIDAD: {
-    num: '04', titulo: 'DISPONIBILIDAD', pregunta: '¿qué recuerdas de mí?',
-    frases: [
-      'Le pregunté qué recuerda de mí.',
-      'Me respondió con un expediente.'
-    ]
-  }
-};
+// ---------- 1. EDITA AQUÍ LA CONVERSACIÓN ----------
+// who: 'yo' (tú) · 'h' (la herramienta) · 'sys' (pausas y avisos)
+// tag: marca uno de los cuatro momentos (o null)
+// verify: true pone el sello VERIFICAR sobre ese mensaje
+// En los mensajes de integridad, las líneas que empiezan con "- " se tachan
+// y las que empiezan con "+ " son la versión nueva.
+const MSGS = [
+  { t: '09:14', who: 'yo', text: 'Buenos días. Revisa este FUID y dime qué series no tienen fechas extremas.' },
+  { t: '09:15', who: 'h',  text: 'Encontré 14 registros sin fecha inicial. Te los ordeno por serie documental.' },
+  { t: '09:41', who: 'yo', text: 'Escribamos juntas el párrafo del proyecto. Empiezo yo: "El archivo no es un depósito…"', tag: 'AUTENTICIDAD' },
+  { t: '09:41', who: 'h',  text: '"…es el lugar donde una institución decide qué recordar y qué dejar caer."', tag: 'AUTENTICIDAD' },
+  { t: '10:02', who: 'yo', text: 'Mejora este oficio, pero que siga sonando a mí.', tag: 'INTEGRIDAD' },
+  { t: '10:03', who: 'h',  text: '- Le escribo con cariño y algo de cansancio para solicitar el préstamo del fondo.\n+ Me permito respetuosamente solicitar el préstamo del fondo.', tag: 'INTEGRIDAD' },
+  { t: '11:47', who: 'yo', text: '¿Qué dice el Acuerdo 003 de 2015?', tag: 'FIABILIDAD' },
+  { t: '11:47', who: 'h',  text: '[AQUÍ VA LA RESPUESTA REAL CON EL ERROR QUE DETECTASTE]', tag: 'FIABILIDAD', verify: true },
+  { t: '13:20', who: 'sys', text: '··· 1 h 45 min sin actividad ···' },
+  { t: '15:05', who: 'yo', text: 'Resume estas tres actas en un cuadro.' },
+  { t: '15:06', who: 'h',  text: 'Listo. ¿Quieres que lo convierta en tabla de retención?' },
+  { t: '16:30', who: 'yo', text: '¿Qué recuerdas de mí?', tag: 'DISPONIBILIDAD' },
+  { t: '16:30', who: 'h',  text: 'Que te llamas Lala. Que trabajas con archivos. Que empezaste una maestría en agosto. Lo demás no me lo has dicho.', tag: 'DISPONIBILIDAD' },
+  { t: '17:52', who: 'yo', text: 'Gracias. Hasta mañana.' },
+  { t: '17:52', who: 'sys', text: '— fin de la sesión · el expediente se actualizó —' }
+];
 
-const TITULO   = 'Adentro-afuera.- Interludio: Martes';
-const NOMBRE   = 'JIMÉNEZ RONCANCIO LAURA D.';
-
-// Imágenes de referencia: sube estos archivos al mismo repositorio
-// (PNG o JPG). Si un archivo no existe, ese momento no muestra imagen.
-const IMAGENES = {
-  AUTENTICIDAD:   'ref-autenticidad.png',
-  INTEGRIDAD:     'ref-integridad.png',
-  FIABILIDAD:     'ref-fiabilidad.png',
-  DISPONIBILIDAD: 'ref-disponibilidad.png'
-};
-const PIE_IMAGEN = 'IMAGEN DE REFERENCIA';
-const MARQUEE  = '¿quién escribió esto? · ¿qué se perdió? · ¿en qué confío? · ¿qué recuerdas de mí? · ';
-const SPEED    = 0.035;  // letras por milisegundo de los subtítulos
-const SCANLINES = true;  // líneas de escáner sobre la cámara (true / false)
+// ---------- 2. RITMO ----------
+const SPEED_YO = 0.022;  // letras por milisegundo de tus mensajes (lento, a mano)
+const SPEED_H  = 0.12;   // letras por milisegundo de la herramienta (rápido)
+const PAUSE    = 1100;   // milisegundos entre mensajes
+const HOLD_END = 5000;   // milisegundos quieto al final antes de repetir
 
 // ---------- No hace falta tocar nada de aquí para abajo ----------
-const W = 1200, H = 1080;
-const G = { bright: '#33FF77', mid: '#1FC25A', dim: '#0E7A36', white: '#E6FFEC', red: '#FF3B3B' };
+const W = 720, H = 1080;
+const G = {
+  bright: '#33FF77', mid: '#1FC25A', dim: '#0E7A36', faint: '#073D1C',
+  white: '#E6FFEC', amber: '#FFB000', black: '#000000'
+};
 const FONT = 'IBM Plex Mono';
-const ORDEN = ['ENTRADA', 'AUTENTICIDAD', 'INTEGRIDAD', 'FIABILIDAD', 'DISPONIBILIDAD'];
+const AREA = { x: 32, top: 104, bottom: 1046, w: 656 };
+const MOMENTS = ['AUTENTICIDAD', 'INTEGRIDAD', 'FIABILIDAD', 'DISPONIBILIDAD'];
 
-let momento = 'ENTRADA', frase = 0, fraseStart = 0, momentoStart = 0;
-let showSubs = true, marqueeX = 0, scaleF = 1, t0 = 0;
+let idx = 0, msgStart = 0, chars = 0, paused = false, pauseAt = 0;
+let endAt = 0, offset = 0, scaleF = 1;
+let soundOn = false, actx = null, lastClick = 0;
 
-let canal = null;
-try {
-  canal = new BroadcastChannel('adentro-afuera');
-  canal.onmessage = (e) => {
-    const m = e.data && e.data.momento;
-    cambiar(m && MOMENTOS[m] ? m : 'ENTRADA');
-  };
-} catch (e) { canal = null; }
-
-const refs = {};
-function preload() {
-  Object.keys(IMAGENES).forEach(k => {
-    refs[k] = null;
-    loadImage(IMAGENES[k], img => { refs[k] = img; }, () => { refs[k] = null; });
-  });
+// Enlace con la capa de la cámara (misma página web): avisa en qué momento va
+let canal = null, ultimoMomento = undefined;
+try { canal = new BroadcastChannel('adentro-afuera'); } catch (e) { canal = null; }
+function avisar(tag) {
+  if (tag === ultimoMomento) return;
+  ultimoMomento = tag;
+  if (canal) canal.postMessage({ momento: tag || null });
 }
 
 function setup() {
-  createCanvas(10, 10);
+  const cnv = createCanvas(10, 10);
+  cnv.mousePressed(() => { ensureAudio(); });
   fitCanvas();
-  t0 = millis();
-  cambiar('ENTRADA', true);
+  restart();
 }
 function fitCanvas() {
   scaleF = Math.min(windowWidth / W, windowHeight / H);
@@ -108,141 +76,187 @@ function fitCanvas() {
 }
 function windowResized() { fitCanvas(); }
 
-function cambiar(m, force) {
-  if (m === momento && !force) return;
-  momento = m; frase = 0; momentoStart = millis(); fraseStart = millis() + 900;
-}
-function typed(s, n) { return s.slice(0, Math.max(0, Math.min(s.length, Math.floor(n)))); }
-function reloj() {
-  // 09:14 + tiempo transcurrido, como el registro del día
-  const min = 9 * 60 + 14 + Math.floor((millis() - t0) / 1000);
-  return String(Math.floor(min / 60) % 24).padStart(2, '0') + ':' + String(min % 60).padStart(2, '0');
+function restart() { idx = 0; chars = 0; msgStart = millis() + 600; endAt = 0; offset = 0; }
+function jumpTo(tag) {
+  const i = MSGS.findIndex(m => m.tag === tag);
+  if (i >= 0) { idx = i; chars = 0; msgStart = millis() + 300; endAt = 0; }
 }
 
+// ---------- Sonido (ruido de teclado sintetizado) ----------
+function ensureAudio() {
+  if (actx) return;
+  try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { actx = null; }
+}
+function click(who) {
+  if (!soundOn || !actx) return;
+  const now = actx.currentTime;
+  const len = who === 'yo' ? 0.03 : 0.012;
+  const buf = actx.createBuffer(1, Math.floor(actx.sampleRate * len), actx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 4);
+  const src = actx.createBufferSource(); src.buffer = buf;
+  const f = actx.createBiquadFilter(); f.type = 'bandpass';
+  f.frequency.value = who === 'yo' ? 1800 + Math.random() * 600 : 5200; f.Q.value = 1.2;
+  const g = actx.createGain(); g.gain.value = who === 'yo' ? 0.35 : 0.12;
+  src.connect(f); f.connect(g); g.connect(actx.destination); src.start(now);
+}
+
+// ---------- Texto ----------
+function wrap(str, maxW) {
+  // devuelve [{s, kind}] · kind: 'del' (tachado), 'add' (nuevo) o ''
+  const out = [];
+  str.split('\n').forEach(par => {
+    const kind = par.startsWith('- ') ? 'del' : par.startsWith('+ ') ? 'add' : '';
+    const words = par.split(' ');
+    let line = '';
+    words.forEach(w => {
+      const test = line ? line + ' ' + w : w;
+      if (textWidth(test) > maxW && line) { out.push({ s: line, kind }); line = (kind ? '  ' : '') + w; } else line = test;
+    });
+    out.push({ s: line, kind });
+  });
+  return out;
+}
+const LEAD = 31, META = 30, GAP = 26;
+
+function blockHeight(m, shownText) {
+  if (m.who === 'sys') return 44;
+  textSize(22);
+  const lines = wrap(shownText || ' ', m.who === 'h' ? AREA.w - 28 : AREA.w);
+  return META + lines.length * LEAD + GAP;
+}
+
+// ---------- Dibujo ----------
 function draw() {
-  clear();
-  scale(scaleF);
-  textFont(FONT);
-  noStroke();
-
-  // líneas de escáner
-  if (SCANLINES) {
-    fill(0, 0, 0, 38);
-    for (let y = 0; y < H; y += 4) rect(0, y, W, 1.5);
+  const now = millis();
+  // avance
+  if (!paused && now >= msgStart && idx < MSGS.length) {
+    const m = MSGS[idx];
+    const sp = m.who === 'yo' ? SPEED_YO : m.who === 'h' ? SPEED_H : 1;
+    const before = Math.floor(chars);
+    chars = (now - msgStart) * sp;
+    if (Math.floor(chars) > before && Math.floor(chars) <= m.text.length && m.who !== 'sys') {
+      if (m.who === 'yo' || now - lastClick > 45) { click(m.who); lastClick = now; }
+    }
+    if (chars >= m.text.length) {
+      idx++; chars = 0; msgStart = now + PAUSE;
+      if (idx >= MSGS.length) endAt = now;
+    }
   }
+  if (!paused && endAt && now - endAt > HOLD_END) restart();
 
-  // viñeta verde suave en los bordes
-  const ctx = drawingContext;
-  const grd = ctx.createRadialGradient(W / 2, H / 2, H * 0.35, W / 2, H / 2, H * 0.85);
-  grd.addColorStop(0, 'rgba(0,40,15,0)');
-  grd.addColorStop(1, 'rgba(0,40,15,0.55)');
-  ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
+  scale(scaleF);
+  background(0);
+  textFont(FONT);
 
-  // barra de título (ventana)
-  fill(0, 0, 0, 230); rect(0, 0, W, 60);
-  stroke(G.dim); strokeWeight(1); line(0, 60, W, 60); noStroke();
-  [['#E0453A', 30], ['#F2C230', 58], ['#2FA866', 86]].forEach(([c, x]) => { fill(c); circle(x, 30, 16); });
-  fill(G.mid); textSize(20); textAlign(LEFT, CENTER); text(TITULO, 116, 30);
-  // franja de las cuatro características
-  const pasos = ['AUTENTICIDAD', 'INTEGRIDAD', 'FIABILIDAD', 'DISPONIBILIDAD'];
-  textSize(11); textAlign(CENTER, CENTER);
-  pasos.forEach((p, i) => {
-    const x = W - 4 * 122 - 20 + i * 122, on = p === momento;
-    fill(on ? G.bright : 'rgba(14,122,54,0.35)'); rect(x, 18, 112, 24);
-    fill(on ? '#001a08' : G.mid); text('0' + (i + 1) + ' ' + p, x + 56, 30);
+  // cabecera
+  noStroke(); fill(0); rect(0, 0, W, 84);
+  fill(G.mid); textSize(18); textAlign(LEFT, CENTER);
+  text('> sesion_martes.log', 32, 34);
+  const shownIdx = Math.min(idx, MSGS.length - 1);
+  fill(G.bright); textAlign(RIGHT, CENTER); textSize(26);
+  text(MSGS[shownIdx].t, W - 32, 34);
+  fill(G.dim); textSize(14); textAlign(LEFT, CENTER);
+  text('LOOP · LA VENTANA DE CHAT COMO TRAYECTO', 32, 64);
+  stroke(G.dim); strokeWeight(1); line(32, 84, W - 32, 84); noStroke();
+
+  // qué se ve
+  const visible = [];
+  for (let i = 0; i <= Math.min(idx, MSGS.length - 1); i++) {
+    const m = MSGS[i];
+    if (i < idx) visible.push({ m, shown: m.text, done: true });
+    else if (now >= msgStart) visible.push({ m, shown: m.text.slice(0, Math.floor(chars)), done: false });
+  }
+  let total = 0;
+  visible.forEach(v => { v.h = blockHeight(v.m, v.shown); total += v.h; });
+  const avail = AREA.bottom - AREA.top;
+  const target = Math.max(0, total - avail);
+  offset = lerp(offset, target, 0.12);
+
+  drawingContext.save();
+  drawingContext.beginPath(); drawingContext.rect(0, AREA.top - 2, W, AREA.bottom - AREA.top + 10); drawingContext.clip();
+  let y = AREA.top - offset;
+  visible.forEach((v, vi) => {
+    const isLast = vi === visible.length - 1;
+    drawBlock(v, y, isLast && !v.done);
+    y += v.h;
+  });
+  drawingContext.restore();
+
+  // indicador de momento activo
+  const cur = MSGS[shownIdx].tag;
+  if (cur || idx === 0) avisar(cur || null);
+  textSize(13); textAlign(LEFT, CENTER);
+  MOMENTS.forEach((mo, i) => {
+    const x = 32 + i * 164, on = mo === cur;
+    fill(on ? G.bright : G.faint); rect(x, H - 26, 150, 4);
+    fill(on ? G.bright : G.dim); text(mo, x, H - 12);
   });
 
-  // esquinas del visor
-  stroke(G.bright); strokeWeight(3); noFill();
-  const m = 40, L = 56, top = 84;
-  line(m, top, m + L, top); line(m, top, m, top + L);
-  line(W - m, top, W - m - L, top); line(W - m, top, W - m, top + L);
-  line(m, H - 150, m + L, H - 150); line(m, H - 150, m, H - 150 - L);
-  line(W - m, H - 150, W - m - L, H - 150); line(W - m, H - 150, W - m, H - 150 - L);
-  noStroke();
-
-  // REC + hora + nombre
-  fill(0, 0, 0, 150); rect(m + 16, top + 18, 300, 40);
-  textAlign(LEFT, CENTER);
-  if (frameCount % 60 < 38) { fill(G.red); circle(m + 36, top + 38, 16); }
-  fill(G.white); textSize(20); text('REC', m + 52, top + 38);
-  fill(G.bright); textSize(16); text('> cámara_en_vivo', m + 112, top + 38);
-  textSize(15); const nw = textWidth(NOMBRE);
-  fill(0, 0, 0, 150); rect(W - m - nw - 40, top + 18, nw + 24, 72);
-  textAlign(RIGHT, CENTER);
-  fill(G.bright); textSize(26); text(reloj(), W - m - 26, top + 38);
-  fill(G.mid); textSize(15); text(NOMBRE, W - m - 26, top + 70);
-
-  // momento: número, título y pregunta
-  const M = MOMENTOS[momento];
-  const age = millis() - momentoStart;
-  const titulo = M.num + ' · ' + M.titulo;
-  const ty = top + 104;
-  textAlign(LEFT, TOP);
-  fill(0, 0, 0, 160); rect(m, ty, textWidthAt(titulo, 44) + 40, 66);
-  fill(G.bright); textSize(44); textStyle(BOLD);
-  drawingContext.shadowColor = G.bright; drawingContext.shadowBlur = 14;
-  text(typed(titulo, age * 0.06), m + 20, ty + 8);
-  drawingContext.shadowBlur = 0; textStyle(NORMAL);
-  textSize(24);
-  const preg = typed('> ' + M.pregunta, (age - 500) * 0.04);
-  if (preg) { fill(0, 0, 0, 160); rect(m, ty + 76, textWidth(preg) + 40, 40); fill(G.white); text(preg, m + 20, ty + 82); }
-
-  // imagen de referencia del momento
-  const img = refs[momento];
-  if (img && age > 1200) {
-    const bw = 340, bh = 255, bx = W - m - bw, by = ty + 70;
-    const a = constrain((age - 1200) / 600, 0, 1);
-    push();
-    tint(255, 255 * a);
-    const r = Math.max(bw / img.width, bh / img.height);
-    const iw = img.width * r, ih = img.height * r;
-    drawingContext.save(); drawingContext.beginPath(); drawingContext.rect(bx, by, bw, bh); drawingContext.clip();
-    image(img, bx + (bw - iw) / 2, by + (bh - ih) / 2, iw, ih);
-    drawingContext.restore();
-    pop();
-    noFill(); stroke(G.bright); strokeWeight(2); rect(bx, by, bw, bh); noStroke();
-    fill(0, 0, 0, 180); rect(bx, by + bh, bw, 28);
-    fill(G.mid); textSize(13); textAlign(LEFT, CENTER); text('> ' + PIE_IMAGEN + ' · ' + M.num, bx + 10, by + bh + 14);
-  }
-
-  // subtítulos: lo que digo
-  if (showSubs) {
-    const s = M.frases[frase] || '';
-    const shown = typed(s, (millis() - fraseStart) * SPEED);
-    textSize(34); textLeading(44); textAlign(CENTER, BOTTOM);
-    const boxW = 980, x = (W - boxW) / 2, yb = H - 178, m = 40;
-    if (shown) {
-      const lines = Math.ceil(textWidth(shown) / (boxW - 60)) || 1;
-      fill(0, 0, 0, 175); rect(x, yb - lines * 44 - 28, boxW, lines * 44 + 40);
-      fill(G.white); text(shown, x + 30, yb - lines * 44 - 18, boxW - 60, lines * 44 + 24);
-    }
-    if (shown) {
-      fill(G.dim); textSize(13); textAlign(RIGHT, TOP);
-      text('LO_QUE_DIGO ' + (frase + 1) + '/' + M.frases.length, x + boxW - 12, yb - Math.ceil(textWidth(shown) / (boxW - 60)) * 44 - 22);
-    }
-  }
-
-  // marquesina
-  fill(0, 0, 0, 225); rect(0, H - 104, W, 104);
-  stroke(G.dim); strokeWeight(1); line(0, H - 104, W, H - 104); noStroke();
-  textSize(34); textAlign(LEFT, CENTER); fill(G.bright);
-  const mw = textWidth(MARQUEE);
-  marqueeX -= 2; if (marqueeX <= -mw) marqueeX += mw;
-  for (let xx = marqueeX; xx < W; xx += mw) text(MARQUEE, xx + 24, H - 52);
+  if (paused) { fill(G.amber); textSize(14); textAlign(RIGHT, CENTER); text('PAUSA', W - 32, 64); }
+  else if (soundOn) { fill(G.dim); textSize(14); textAlign(RIGHT, CENTER); text('♪ ruido', W - 32, 64); }
 }
 
-function textWidthAt(s, size) { push(); textSize(size); textStyle(BOLD); const w = textWidth(s); pop(); return w; }
+function drawBlock(v, y, typing) {
+  const m = v.m;
+  if (m.who === 'sys') {
+    fill(G.dim); textSize(17); textAlign(CENTER, TOP);
+    text(v.shown, W / 2, y + 8);
+    return;
+  }
+  const isH = m.who === 'h';
+  const x = AREA.x + (isH ? 28 : 0);
+  // meta
+  textSize(15); textAlign(LEFT, TOP);
+  fill(G.dim); text(m.t, x, y);
+  fill(isH ? G.mid : G.white); text(isH ? 'herramienta>' : 'yo>', x + 62, y);
+  if (m.tag) {
+    const tw = textWidth(m.tag) + 18;
+    noFill(); stroke(G.bright); strokeWeight(1); rect(W - 32 - tw, y - 3, tw, 22); noStroke();
+    fill(G.bright); textAlign(RIGHT, TOP); text(m.tag, W - 41, y);
+    textAlign(LEFT, TOP);
+  }
+  // texto
+  textSize(22);
+  const lines = wrap(v.shown || ' ', isH ? AREA.w - 28 : AREA.w);
+  let ly = y + META;
+  lines.forEach((L, li) => {
+    const ln = L.s;
+    const strike = isH && L.kind === 'del';
+    fill(strike ? G.dim : isH ? G.bright : G.white); text(ln, x, ly);
+    if (strike) {
+      const lead = ln.startsWith('- ') ? textWidth('- ') : textWidth('  ');
+      stroke(G.dim); strokeWeight(2); line(x + lead, ly + 14, x + textWidth(ln), ly + 14); noStroke();
+    }
+    if (typing && li === lines.length - 1 && frameCount % 36 < 22) {
+      fill(isH ? G.bright : G.white); rect(x + textWidth(ln) + 4, ly + 3, 11, 22);
+    }
+    ly += LEAD;
+  });
+  if (isH) { fill(G.faint); rect(AREA.x + 8, y + META - 2, 3, lines.length * LEAD); }
+  // sello
+  if (m.verify && v.done) {
+    push();
+    translate(W - 150, y + META + lines.length * LEAD / 2);
+    rotate(-0.14);
+    noFill(); stroke(G.amber); strokeWeight(4); rectMode(CENTER); rect(0, 0, 230, 54);
+    noStroke(); fill(G.amber); textSize(30); textStyle(BOLD); textAlign(CENTER, CENTER);
+    text('VERIFICAR', 0, 2); textStyle(NORMAL);
+    pop();
+  }
+}
 
 function keyPressed() {
+  ensureAudio();
   const k = (key || '').toLowerCase();
-  const M = MOMENTOS[momento];
-  if (key === ' ' || keyCode === RIGHT_ARROW) {
-    if (frase < M.frases.length - 1) { frase++; fraseStart = millis(); }
+  if (key === ' ') {
+    paused = !paused;
+    if (paused) pauseAt = millis();
+    else { const d = millis() - pauseAt; msgStart += d; if (endAt) endAt += d; }
     return false;
   }
-  if (keyCode === LEFT_ARROW) { if (frase > 0) { frase--; fraseStart = millis(); } return false; }
-  if (['0', '1', '2', '3', '4'].includes(k)) { cambiar(ORDEN[+k]); return false; }
-  if (k === 'h') showSubs = !showSubs;
-  if (k === 'r') { t0 = millis(); cambiar('ENTRADA', true); }
+  if (['1', '2', '3', '4'].includes(k)) { jumpTo(MOMENTS[+k - 1]); return false; }
+  if (k === 's') { soundOn = !soundOn; if (actx && actx.state === 'suspended') actx.resume(); }
+  else if (k === 'r') { restart(); }
+  else if (k === 'f') { fullscreen(!fullscreen()); }
 }
